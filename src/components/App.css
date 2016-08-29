@@ -4,11 +4,16 @@
 
 .App-header {
   background-color: #222;
-  height: 100px;
-  padding: 10px;
+  height: 75px;
+  padding: 1em;
   color: white;
 }
 
+.App-header h2 {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
 .Buttons {
-  padding-top: 5em;
+  padding-top: 2.5em;
 }

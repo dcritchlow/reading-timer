@@ -17,6 +17,7 @@ class App extends Component {
       buttonsDisabled: false,
       cancel: () => this.cancelTimer(),
       timerEnded: false,
+      audioContext: new AudioContext(),
     };
 
     this.handleClick = this.handleClick.bind(this);
@@ -34,8 +35,7 @@ class App extends Component {
 
   endTimer() {
     if(this.state.timerEnded){
-      let audio = new Audio(require("file!../sounds/alarm.mp3"));
-      audio.play();
+      this.playSound();
     }
 
     this.setState({
@@ -61,6 +61,17 @@ class App extends Component {
     return '#'+('00000'+(Math.random()*16777216<<0).toString(16)).substr(-6);
   }
 
+  playSound(){
+    let oscillator = this.state.audioContext.createOscillator()
+    let context = this.state.audioContext;
+    
+    oscillator.type = "square";
+    oscillator.frequency.value = 261.63;
+    oscillator.start(context.currentTime);
+    oscillator.stop(context.currentTime + 5);
+    oscillator.connect(context.destination);
+  }
+
   render() {
     let buttonsDisabled = this.state.buttonsDisabled;
     let timerVisible = this.state.timerVisible;
@@ -71,7 +82,7 @@ class App extends Component {
           <h2>Reading Timer</h2>
           <div className="Buttons">
             <ButtonGroup> 
-              <TimeButton time='10 minutes' onClick={!buttonsDisabled ? () => this.handleClick(600) : null}  disabled={buttonsDisabled}/>
+              <TimeButton time='10 minutes' onClick={!buttonsDisabled ? () => this.handleClick(6) : null}  disabled={buttonsDisabled}/>
               <TimeButton time='20 minutes' onClick={!buttonsDisabled ? () => this.handleClick(1200) : null} disabled={buttonsDisabled}/>
               <TimeButton time='30 minutes' onClick={!buttonsDisabled ? () => this.handleClick(1800) : null} disabled={buttonsDisabled}/>
             </ButtonGroup>            
