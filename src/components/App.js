@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { ButtonGroup } from 'react-bootstrap';
 import TimeButton from './TimeButton';
-import Timer from './Timer.js'; //<Timer {...this.state} />
+import Timer from './Timer.js';
+import TimerFinished from './TimerFinished';
 import './App.css';
 
 class App extends Component {
@@ -9,11 +10,13 @@ class App extends Component {
     super(props);
 
     this.state = {
-      seconds: 1200000,
-      color: '#'+Math.floor(Math.random()*16777215).toString(16),
-      callback: () => this.hideTimer(),
+      seconds: 0,
+      color: this.getColor(),
+      callback: () => this.timerEnded(),
       timerVisible: false,
-      buttonsDisabled: false
+      buttonsDisabled: false,
+      cancel: () => this.cancelTimer(),
+      timerEnded: false,
     };
 
     this.handleClick = this.handleClick.bind(this);
@@ -22,46 +25,66 @@ class App extends Component {
   handleClick(value) {
     this.setState({
       seconds: value,
+      color: this.getColor(),
+      timerVisible: !this.state.timerVisible,
+      buttonsDisabled: !this.state.buttonsDisabled,
+      timerEnded: false
+    });
+  }
+
+  endTimer() {
+    if(this.state.timerEnded){
+      let audio = new Audio(require("file!../sounds/alarm.mp3"));
+      audio.play();
+    }
+
+    this.setState({
+      seconds:0,
       timerVisible: !this.state.timerVisible,
       buttonsDisabled: !this.state.buttonsDisabled
     });
   }
 
-  hideTimer() {
-    let audio = new Audio("http://soundbible.com/mp3/House%20Fire%20Alarm-SoundBible.com-1609046789.mp3");
-    audio.play();
-    // wait till sound is done playing to hide the timer
-    setTimeout(() => {
-      this.setState({
-        timerVisible: !this.state.timerVisible,
-        buttonsDisabled: !this.state.buttonsDisabled
-      });
-    }, 12000);
+  timerEnded() {
+    this.setState({
+      timerEnded: true
+    }, () => this.endTimer());
+  }
+
+  cancelTimer() {
+    this.setState({
+      timerEnded: false
+    }, () => this.endTimer());
+  }
+
+  getColor() {
+    return '#'+('00000'+(Math.random()*16777216<<0).toString(16)).substr(-6);
   }
 
   render() {
     let buttonsDisabled = this.state.buttonsDisabled;
+    let timerVisible = this.state.timerVisible;
+    let timerEnded = this.state.timerEnded;
     return (
       <div className="App">
         <div className="App-header">
           <h2>Reading Timer</h2>
           <div className="Buttons">
-            {
-              buttonsDisabled
-              ? 'Timer running...'
-              : 
-              <ButtonGroup> 
-                <TimeButton time='10 minutes' onClick={() => this.handleClick(600)} />
-                <TimeButton time='20 minutes' onClick={() => this.handleClick(1200)} />
-                <TimeButton time='30 minutes' onClick={() => this.handleClick(1800)} />
-              </ButtonGroup>
-            }
-            
+            <ButtonGroup> 
+              <TimeButton time='10 minutes' onClick={!buttonsDisabled ? () => this.handleClick(600) : null}  disabled={buttonsDisabled}/>
+              <TimeButton time='20 minutes' onClick={!buttonsDisabled ? () => this.handleClick(1200) : null} disabled={buttonsDisabled}/>
+              <TimeButton time='30 minutes' onClick={!buttonsDisabled ? () => this.handleClick(1800) : null} disabled={buttonsDisabled}/>
+            </ButtonGroup>            
           </div>
           {
-            this.state.timerVisible
-              ? <Timer {...this.state} />
-              : null
+            timerVisible 
+            ? <Timer {...this.state} />
+            : null
+          }
+          {
+            timerEnded
+            ? <TimerFinished /> 
+            : null
           }
         </div>
       </div>

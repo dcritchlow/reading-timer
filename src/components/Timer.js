@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactCountdownClock from 'react-countdown-clock';
+import { Button } from 'react-bootstrap';
 import './Timer.css';
 
 const Timer = (props) => {
@@ -12,6 +13,9 @@ const Timer = (props) => {
             size={300}
             onComplete={props.callback}
         />
+        <div>
+            <Button bsStyle="danger" onClick={props.cancel}>Cancel</Button>
+        </div>
     </div>
     );
 }
