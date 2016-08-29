@@ -82,7 +82,7 @@ class App extends Component {
           <h2>Reading Timer</h2>
           <div className="Buttons">
             <ButtonGroup> 
-              <TimeButton time='10 minutes' onClick={!buttonsDisabled ? () => this.handleClick(6) : null}  disabled={buttonsDisabled}/>
+              <TimeButton time='10 minutes' onClick={!buttonsDisabled ? () => this.handleClick(600) : null}  disabled={buttonsDisabled}/>
               <TimeButton time='20 minutes' onClick={!buttonsDisabled ? () => this.handleClick(1200) : null} disabled={buttonsDisabled}/>
               <TimeButton time='30 minutes' onClick={!buttonsDisabled ? () => this.handleClick(1800) : null} disabled={buttonsDisabled}/>
             </ButtonGroup>            
