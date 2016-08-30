@@ -17,6 +17,7 @@ class App extends Component {
       buttonsDisabled: false,
       cancel: () => this.cancelTimer(),
       timerEnded: false,
+      audioContext: new AudioContext(),
     };
 
     this.handleClick = this.handleClick.bind(this);
@@ -34,8 +35,7 @@ class App extends Component {
 
   endTimer() {
     if(this.state.timerEnded){
-      let audio = new Audio(require("file!../sounds/alarm.mp3"));
-      audio.play();
+      this.playSound();
     }
 
     this.setState({
@@ -59,6 +59,17 @@ class App extends Component {
 
   getColor() {
     return '#'+('00000'+(Math.random()*16777216<<0).toString(16)).substr(-6);
+  }
+
+  playSound(){
+    let oscillator = this.state.audioContext.createOscillator()
+    let context = this.state.audioContext;
+    
+    oscillator.type = "square";
+    oscillator.frequency.value = 261.63;
+    oscillator.start(context.currentTime);
+    oscillator.stop(context.currentTime + 5);
+    oscillator.connect(context.destination);
   }
 
   render() {
